@@ -1,43 +1,143 @@
-const products = [
-    { id: 1, title: 'Notebook', price: 2000, img: 'product_1.jpg' },
-    { id: 2, title: 'Mouse', price: 20, img: 'product_2.jpg' },
-    { id: 3, title: 'Keyboard', price: 200, img: 'product_3.jpg' },
-    { id: 4, title: 'Gamepad', price: 50, img: 'product_4.jpg' },
-];
-//Функция для формирования верстки каждого товара
-//Добавить в выводе изображение
-// старый renderProduct 
-// const renderProduct = (title, price, img) => {
-//     return `<div class="product-item">
-//                 <img src='./img/${img}' alt =foto_${img} width = 180px; height = 200px>
-//                 <h3>${title}</h3>
-//                 <p>${price}</p>
-//                 <button class="buy-btn">Купить</button>
-//             </div>`
-// };
+class ProductList {
+    constructor(container = '.products') {
+        this.container = container;
+        this.goods = [];
+        this._fetchProducts();//рекомендация, чтобы метод был вызван в текущем классе
+        this.render();//вывод товаров на страницу
+    };
 
-// новый рендер 
-const renderProduct = (obj) => {
-    return `<div class="product-item product-item_${obj.id}">
-                <img src='./img/${obj.img}' alt =foto_${obj.img} width = 180px; height = 200px>
-                <h3>${obj.title}</h3>
-                <p>${obj.price}</p>
+    _fetchProducts() {
+        this.goods = [
+            { id: 1, title: 'Notebook', price: 2000 },
+            { id: 2, title: 'Mouse', price: 20 },
+            { id: 3, title: 'Keyboard', price: 200 },
+            { id: 4, title: 'Gamepad', price: 50 },
+        ];
+    };
+
+
+
+    render() {
+        const block = document.querySelector(this.container);
+        for (let product of this.goods) {
+            const item = new ProductItem(product);
+            block.insertAdjacentHTML("beforeend", item.render());
+            //           block.innerHTML += item.render();
+        };
+    };
+    // метод суммирует и возвращает общую стоимость всех товаров которые есть в каталоге 
+    sumGoods() {
+        // первый способ цикл foreach
+        //     let sum = 0;
+        //     this.goods.forEach(item => {
+        //         sum += (item.price);
+        //     });
+        //     console.log(`Сумма всех товаров = ${sum}`)
+        //     return parseInt(sum);
+
+        // используем метод reduce 
+        let result = this.goods.reduce((s, item) => s + item.price, 0);
+        alert(`Сумма всех товаров = ${result}`);
+    };
+
+
+};
+
+class ProductItem {
+    constructor(product, img = 'https://via.placeholder.com/200x150') {
+        this.title = product.title;
+        this.id = product.id;
+        this.price = product.price;
+        this.img = img;
+    }
+    render() {
+        return `<div class="product-item" id =${this.id}>
+                <img src="${this.img}">
+                <h3>${this.title}</h3>
+                <p>${this.price}</p>
                 <button class="buy-btn">Купить</button>
             </div>`
+    };
 };
 
-//копия рендер конец
+let list = new ProductList();
+// вызываем метод sumGoods и выводим сумму стоимости всех товаров
+list.sumGoods()
 
-const renderPage = list => {
-    // в переменную productsList по окончании работы функции renderProduct присваивается массив у которого элементы это разметка каждого товара, поэтому когда мы этот массив вставляем в div с классом .products каждый товар при выводе на экран идет через запятую ,чтобы убрать запятые нужно чтобы в переменную productsList присваивалась одна строка из разметки, чтобы этого добиться мы к полученному масиву productsList применяем метод join и в скобках указываем чем у нас будут разделяться элементы этого массива, в данном случае используем пробел
+// Создаем класс shoppingCart корзины товаров, который налседуется от класса  ProductList
+// этот класс  будет наследовать свойство this.goods, которое хранит массив товаров с названием id ценой и картинкой
+class shoppingCart extends ProductList {
+    constructor() {
+        super()
+        this.goods;
+    }
 
-    // старый вариант
-    // const productsList = (list.map(item => renderProduct(item.title, item.price, item.img))).join(' ');
+    renderCart() {
+        // метод будет формирать верстку корзины  
+    };
 
-    // новый вариант products передаем не значения свойств объекта а сам объект
-    const productsList = (list.map(item => renderProduct(item))).join(' ');
-    console.log(productsList);
-    document.querySelector('.products').innerHTML = productsList;
+    resultGoodsCart() {
+        // метод будет отвечат за подсчет общей суммы заказа
+    }
+
+    placeOrderCart() {
+        // метод будет отвечать за переход к заказу 
+    }
+
 };
 
-renderPage(products);
+// для проверки 
+// let test = new shoppingCart;
+// test.goods.forEach(itemGoods => console.log(itemGoods.title))
+// console.log(test.goods);
+
+
+
+// Создаем класс товара корзины, который наследуется от класса ProductList
+// этот класс  будет наследовать свойство this.goods которое хранит массив товаров с названием id ценой и картинкой
+class goodsCart extends ProductList {
+    constructor() {
+        super()
+        this.goods;
+    }
+
+    // Создаем свой метод для класса
+    sumGoodsCart() {
+        // Метод будет считать какое количество товара пользователь добавил в корзину и умножать его на цену товара,
+        //т.е.общую стоимость по конкретному товару.
+    }
+
+    deleteGoodsCart() {
+        // метод будет отвечать за удаление товара из списка корзины
+    }
+
+    increasedGoodsCart() {
+        // метод будет отвечать за увелечение количества товара, который уже добавлен в корзину
+    }
+
+    reduceGoodsCart() {
+        // метод будет отвечать за уменьшение количества товара, который уже добавлен в корзину
+    }
+}
+
+
+
+// предыдущий способ верстки товаров
+//const products = [
+//    {id: 1, title: 'Notebook', price: 2000},
+//    {id: 2, title: 'Mouse', price: 20},
+//    {id: 3, title: 'Keyboard', price: 200},
+//    {id: 4, title: 'Gamepad', price: 50},
+//];
+//
+//const renderProduct = (product,img='https://placehold.it/200x150') => {
+//    return `<div class="product-item">
+//                <img src="${img}">
+//                <h3>${product.title}</h3>
+//                <p>${product.price}</p>
+//                <button class="buy-btn">Купить</button>
+//            </div>`
+//};
+//const renderPage = list => document.querySelector('.products').innerHTML = list.map(item => renderProduct(item)).join('');
+//
+//renderPage(products);
